@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{42872a22-abd1-44fe-b010-6e7179bdc7f9}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{1c05a852-a229-4c0f-bfc4-377fe9a2e953}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{12b1157a-d60f-46c7-b4e5-f14884bca2a3}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\LaunchBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="src\admin.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\delete.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\exit.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\explore.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\help.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\main.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\menu.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\new.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Properties.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\refresh.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\run.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="run.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Settings.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="start.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\start.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="src\LaunchBar.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

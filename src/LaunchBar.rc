@@ -1,0 +1,289 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOGEX 0, 0, 186, 86
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "LaunchBar"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,129,65,50,14
+    LTEXT           "LaunchBar\nVersion: %s\nDate: %s",IDC_VERSION,46,13,124,28
+    LTEXT           "Written by Peter Lerup\nCopyright (C) 2009-2012 Peter Lerup",IDC_STATIC,46,43,126,21
+    ICON            IDI_APP,IDC_STATIC,13,14,20,20
+    CONTROL         "<A HREF=""http://www.lerup.com/LaunchBar"">More information</A>",IDC_SYSLINK1,
+                    "SysLink",WS_TABSTOP,46,66,57,10
+END
+
+IDD_SETTINGS DIALOGEX 0, 0, 152, 119
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Settings"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Position",IDC_STATIC,7,7,62,65
+    CONTROL         "Left",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,18,49,12
+    CONTROL         "Top",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,15,30,49,12
+    CONTROL         "Right",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON,15,42,49,12
+    CONTROL         "Bottom",IDC_RADIO4,"Button",BS_AUTORADIOBUTTON,15,54,49,12
+    CONTROL         "Use large icons",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,10,68,14
+    CONTROL         "Always on top",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,36,68,14
+    CONTROL         "Autostart",IDC_CHECK5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,49,58,14
+    CONTROL         "Auto-hide",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,62,68,14
+    CONTROL         "Click to show",IDC_CHECK4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,87,75,58,14
+    DEFPUSHBUTTON   "OK",IDOK,18,98,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,84,98,50,14
+    CONTROL         "Use large menus",IDC_CHECK6,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,23,68,14
+END
+
+IDD_ADDMENU DIALOGEX 0, 0, 146, 54
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add Menu"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_ANSWER,34,7,105,13,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,15,33,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,80,33,50,14
+    LTEXT           "Name:",IDC_STATIC,7,8,24,12
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 79
+    END
+
+    IDD_SETTINGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 145
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 112
+    END
+
+    IDD_ADDMENU, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 139
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 47
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU1 MENU 
+BEGIN
+    MENUITEM "Help...",                     IDM_HELP
+    MENUITEM "About...",                    IDM_ABOUT
+    MENUITEM "Settings...",                 IDM_SETTINGS
+    MENUITEM "Add Button...",               IDM_NEW
+    MENUITEM "Add Menu...",                 IDM_ADDMENU
+    MENUITEM "Explore",                     IDM_EXPLORE
+    MENUITEM "Refresh",                     IDM_REFRESH
+    MENUITEM "Add Start Menu",              IDM_ADDSTARTMENU
+    MENUITEM "Run...",                      IDM_RUN
+    MENUITEM "Exit",                        IDM_EXIT
+END
+
+IDR_MENU2 MENU 
+BEGIN
+    MENUITEM "Delete",                      IDM_DELETE
+    MENUITEM "Properties",                  IDM_PROPERTIES
+    MENUITEM "Explore",                     IDM_EXPLORE
+    MENUITEM "Run as administrator",        IDM_RUNASADMIN
+END
+
+IDR_MENU3 MENU 
+BEGIN
+    MENUITEM "Delete",                      IDM_DELETE
+    MENUITEM "Properties",                  IDM_PROPERTIES
+    MENUITEM "Explore",                     IDM_EXPLORE
+    MENUITEM "Add Menu...",                 IDM_ADDMENU
+    MENUITEM "Add Item...",                 IDM_NEW
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_APP                 ICON                    "main.ico"
+IDI_ADMIN               ICON                    "admin.ico"
+IDI_DELETE              ICON                    "delete.ico"
+IDI_EXIT                ICON                    "exit.ico"
+IDI_EXPLORE             ICON                    "explore.ico"
+IDI_PROPERTIES          ICON                    "Properties.ico"
+IDI_SETTINGS            ICON                    "Settings.ico"
+IDI_HELP                ICON                    "help.ico"
+IDI_NEW                 ICON                    "new.ico"
+IDI_REFRESH             ICON                    "refresh.ico"
+IDI_MENU                ICON                    "menu.ico"
+IDI_STARTMENU           ICON                    "start.ico"
+IDI_RUN                 ICON                    "run.ico"
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Swedish resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_SVE)
+#ifdef _WIN32
+LANGUAGE LANG_SWEDISH, SUBLANG_DEFAULT
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 3,0,0,1
+ PRODUCTVERSION 3,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", " "
+            VALUE "FileDescription", "LaunchBar"
+            VALUE "FileVersion", "3, 0, 0, 1"
+            VALUE "InternalName", "LaunchBar"
+            VALUE "LegalCopyright", "Copyright © 2009-2012 Peter Lerup"
+            VALUE "OriginalFilename", "LaunchBar.exe"
+            VALUE "ProductName", "  LaunchBar"
+            VALUE "ProductVersion", "3, 0, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_CONF_ERR            "Failed to open configuration file: ""%s"""
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_INFO                "Information"
+    IDS_WARNING             "Warning"
+    IDS_ERROR               "Error"
+    IDS_FATAL               "Fatal Error"
+    IDS_SHORTCUT            "Shortcut"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_RUN_ERR             "Failed to start: ""%s"""
+    IDS_DIR_NOTFOUND        "Directory: ""%s"" does not exist"
+    IDS_DIR_EMPTY           "QuickLaunch directory could not be found"
+    IDS_APPDESCR            "LaunchBar, Application launch toolbar"
+    IDS_MAIN_TIP            "Click for menu"
+    IDS_ALL_FILES           "All Files (*.*)|*.*||"
+    IDS_DIR_FAIL            "Failed to create directory: ""%s"""
+    IDS_DIR_EXIST           "Directory: ""%s"" exists already"
+END
+
+#endif    // Swedish resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
