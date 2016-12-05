@@ -33,8 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "utils.h"
 
 #define PROG_NAME _T("LaunchBar")
-#define VERSION_STR _T("3.0.0")
-#define DATE_STR _T("2012-05-13")
+#define VERSION_STR _T("3.1.0")
+#define DATE_STR _T("2016-12-01")
 
 // Window classes
 #define BUTTON_CLASS_NAME _T("ICON_BUTTON")
@@ -91,6 +91,7 @@ BOOL gOnTop = FALSE;      // Toolbar always on top
 DWORD gAutoHide = 0;      // Hide toolbar when loosing focus
 BOOL gHidden = FALSE;     // Visibility state
 DWORD gLocation = 3;      // Corner position (1 = left, 2 = top, 3 = right, 4 = bottom)
+BOOL gCenter = FALSE;     // Center the toolbar
 
 DWORD xOffset, yOffset;  // Offset from window border to button
 DWORD xInc, yInc;        // Increment between buttons
@@ -330,6 +331,28 @@ BOOL SetupLayout()
 
    gWindowSize.x = gWindowRect.right-gWindowRect.left;
    gWindowSize.y = gWindowRect.bottom-gWindowRect.top;
+
+   if (gCenter)
+   {
+      DWORD xSpace = (screenRect.right - screenRect.left - gWindowSize.x) / 2;
+      DWORD ySpace = (screenRect.bottom - screenRect.top - gWindowSize.y) / 2;
+      switch (gLocation)
+      {
+         case 1:
+         case 3:
+            gWindowRect.top += ySpace;
+            gWindowRect.bottom += ySpace;
+            break;
+
+         case 2:
+         case 4:
+            gWindowRect.left += ySpace;
+            gWindowRect.right += ySpace;
+            break;
+      }
+
+   }
+
    PositionWindow();
    // Make sure that the window contents is updated
    InvalidateRect(gMainWindow, NULL, TRUE);
@@ -932,6 +955,7 @@ BOOL ParseSetting(LPCTSTR str)
    // Evaluate possible settings specification from config file or command line
    return (
        _stscanf_s(str, _T("POSITION=%d"), &gLocation) ||
+       _stscanf_s(str, _T("CENTER=%d"), &gCenter) ||
        _stscanf_s(str, _T("LARGE=%d"), &gLargeIcons) ||
        _stscanf_s(str, _T("LARGEMENUS=%d"), &gLargeMenus) ||
        _stscanf_s(str, _T("ONTOP=%d"), &gOnTop) ||
@@ -1123,6 +1147,7 @@ INT_PTR CALLBACK Settings(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	   case WM_INITDIALOG:
          CheckRadioButton(hDlg, IDC_RADIO1, IDC_RADIO4, IDC_RADIO1 + gLocation-1);
+         CheckDlgButton(hDlg, IDC_CHECK7, gCenter);
          CheckDlgButton(hDlg, IDC_CHECK1, gLargeIcons);
          CheckDlgButton(hDlg, IDC_CHECK2, gOnTop);
          CheckDlgButton(hDlg, IDC_CHECK3, gAutoHide > 0);
@@ -1151,6 +1176,7 @@ INT_PTR CALLBACK Settings(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                   gLocation = 3;
                else if (IsDlgButtonChecked(hDlg, IDC_RADIO4))
                   gLocation = 4;
+               gCenter = IsDlgButtonChecked(hDlg, IDC_CHECK7);
                gLargeIcons = IsDlgButtonChecked(hDlg, IDC_CHECK1);
                gOnTop = IsDlgButtonChecked(hDlg, IDC_CHECK2);
                gAutoHide = 0;
@@ -1406,6 +1432,7 @@ ATOM RegMainWindClass()
 #define ALWAYS_ON_TOP_KEY _T("AlwaysOnTop")
 #define AUTOHIDE_KEY _T("AutoHide")
 #define LOCATION_KEY _T("Location")
+#define CENTER_KEY _T("Center")
 #define BUTTONS_KEY _T("Buttons")
 
 BOOL ReadPrefs()
@@ -1419,6 +1446,7 @@ BOOL ReadPrefs()
    GET_REG_INT(ALWAYS_ON_TOP_KEY, gOnTop);
    GET_REG_INT(AUTOHIDE_KEY, gAutoHide);
    GET_REG_INT(LOCATION_KEY, gLocation);
+   GET_REG_INT(CENTER_KEY, gCenter);
 
    CString buf = GetRegVal(BUTTONS_KEY);
    int pos = 0;
@@ -1440,11 +1468,12 @@ BOOL SavePrefs()
 	  return FALSE;
 
 	// Save preferences to the registry
-	SET_REG_INT(LARGE_ICONS_KEY, gLargeIcons);
-	SET_REG_INT(LARGE_MENUS_KEY, gLargeMenus);
-	SET_REG_INT(ALWAYS_ON_TOP_KEY, gOnTop);
-	SET_REG_INT(AUTOHIDE_KEY, gAutoHide);
-	SET_REG_INT(LOCATION_KEY, gLocation);
+   SET_REG_INT(LARGE_ICONS_KEY, gLargeIcons);
+   SET_REG_INT(LARGE_MENUS_KEY, gLargeMenus);
+   SET_REG_INT(ALWAYS_ON_TOP_KEY, gOnTop);
+   SET_REG_INT(AUTOHIDE_KEY, gAutoHide);
+   SET_REG_INT(LOCATION_KEY, gLocation);
+   SET_REG_INT(CENTER_KEY, gCenter);
 
 	// Save the current order of the buttons
    DWORD i;

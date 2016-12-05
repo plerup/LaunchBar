@@ -75,6 +75,7 @@
 #define IDC_ANSWER                      508
 #define IDC_CHECK4                      509
 #define IDC_CHECK5                      510
+#define IDC_CHECK7                      511
 #define IDS_INFO                        1000
 #define IDS_WARNING                     1001
 #define IDS_ERROR                       1002
@@ -87,7 +88,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        134
 #define _APS_NEXT_COMMAND_VALUE         429
-#define _APS_NEXT_CONTROL_VALUE         509
+#define _APS_NEXT_CONTROL_VALUE         512
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

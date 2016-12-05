@@ -13,13 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -33,7 +31,7 @@ FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,129,65,50,14
     LTEXT           "LaunchBar\nVersion: %s\nDate: %s",IDC_VERSION,46,13,124,28
-    LTEXT           "Written by Peter Lerup\nCopyright (C) 2009-2012 Peter Lerup",IDC_STATIC,46,43,126,21
+    LTEXT           "Written by Peter Lerup\nCopyright (C) 2009-2016 Peter Lerup",IDC_STATIC,46,43,126,21
     ICON            IDI_APP,IDC_STATIC,13,14,20,20
     CONTROL         "<A HREF=""http://www.lerup.com/LaunchBar"">More information</A>",IDC_SYSLINK1,
                     "SysLink",WS_TABSTOP,46,66,57,10
@@ -44,7 +42,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "Settings"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Position",IDC_STATIC,7,7,62,65
+    GROUPBOX        "Position",IDC_STATIC,7,7,62,77
     CONTROL         "Left",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,18,49,12
     CONTROL         "Top",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,15,30,49,12
     CONTROL         "Right",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON,15,42,49,12
@@ -57,6 +55,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,18,98,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,84,98,50,14
     CONTROL         "Use large menus",IDC_CHECK6,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,23,68,14
+    CONTROL         "Center",IDC_CHECK7,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,66,37,14
 END
 
 IDD_ADDMENU DIALOGEX 0, 0, 146, 54
@@ -77,7 +76,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
@@ -111,7 +110,7 @@ END
 // Menu
 //
 
-IDR_MENU1 MENU 
+IDR_MENU1 MENU
 BEGIN
     MENUITEM "Help...",                     IDM_HELP
     MENUITEM "About...",                    IDM_ABOUT
@@ -125,7 +124,7 @@ BEGIN
     MENUITEM "Exit",                        IDM_EXIT
 END
 
-IDR_MENU2 MENU 
+IDR_MENU2 MENU
 BEGIN
     MENUITEM "Delete",                      IDM_DELETE
     MENUITEM "Properties",                  IDM_PROPERTIES
@@ -133,7 +132,7 @@ BEGIN
     MENUITEM "Run as administrator",        IDM_RUNASADMIN
 END
 
-IDR_MENU3 MENU 
+IDR_MENU3 MENU
 BEGIN
     MENUITEM "Delete",                      IDM_DELETE
     MENUITEM "Properties",                  IDM_PROPERTIES
@@ -163,18 +162,6 @@ IDI_REFRESH             ICON                    "refresh.ico"
 IDI_MENU                ICON                    "menu.ico"
 IDI_STARTMENU           ICON                    "start.ico"
 IDI_RUN                 ICON                    "run.ico"
-#endif    // English (U.S.) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// Swedish resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_SVE)
-#ifdef _WIN32
-LANGUAGE LANG_SWEDISH, SUBLANG_DEFAULT
-#pragma code_page(1252)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -246,12 +233,12 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CONF_ERR            "Failed to open configuration file: ""%s"""
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_INFO                "Information"
     IDS_WARNING             "Warning"
@@ -260,7 +247,7 @@ BEGIN
     IDS_SHORTCUT            "Shortcut"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_RUN_ERR             "Failed to start: ""%s"""
     IDS_DIR_NOTFOUND        "Directory: ""%s"" does not exist"
@@ -272,7 +259,7 @@ BEGIN
     IDS_DIR_EXIST           "Directory: ""%s"" exists already"
 END
 
-#endif    // Swedish resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
