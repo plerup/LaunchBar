@@ -195,8 +195,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,0,0,1
- PRODUCTVERSION 3,0,0,1
+ FILEVERSION 3,1,1,0
+ PRODUCTVERSION 3,1,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -213,12 +213,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", " "
             VALUE "FileDescription", "LaunchBar"
-            VALUE "FileVersion", "3, 0, 0, 1"
+            VALUE "FileVersion", "3.1.1.0"
             VALUE "InternalName", "LaunchBar"
-            VALUE "LegalCopyright", "Copyright © 2009-2012 Peter Lerup"
+            VALUE "LegalCopyright", "Copyright © 2009-2016 Peter Lerup"
             VALUE "OriginalFilename", "LaunchBar.exe"
             VALUE "ProductName", "  LaunchBar"
-            VALUE "ProductVersion", "3, 0, 0, 1"
+            VALUE "ProductVersion", "3.1.1.0"
         END
     END
     BLOCK "VarFileInfo"

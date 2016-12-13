@@ -33,8 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "utils.h"
 
 #define PROG_NAME _T("LaunchBar")
-#define VERSION_STR _T("3.1.0")
-#define DATE_STR _T("2016-12-01")
+#define VERSION_STR _T("3.1.1")
+#define DATE_STR _T("2016-12-13")
 
 // Window classes
 #define BUTTON_CLASS_NAME _T("ICON_BUTTON")
@@ -346,8 +346,8 @@ BOOL SetupLayout()
 
          case 2:
          case 4:
-            gWindowRect.left += ySpace;
-            gWindowRect.right += ySpace;
+            gWindowRect.left += xSpace;
+            gWindowRect.right += xSpace;
             break;
       }
 
