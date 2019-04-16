@@ -2,6 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by LaunchBar.rc
 //
+#define IDR_MENU0                       101
 #define IDR_MENU1                       102
 #define IDD_DIALOG2                     103
 #define IDD_ABOUT                       103

@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <ShlObj.h>
 #include  <io.h>
 
+#include <commoncontrols.h>
+
 #include "resource.h"
 
 #include "utils.h"
@@ -459,16 +461,33 @@ BOOL GetShortcutInfo(LPCTSTR path, CString& targetPath,
 
 BOOL GetFileIcons(LPCTSTR fileName, HICON *largeIcon, HICON *smallIcon)
 {
-   SHFILEINFO inf;
+   //SHFILEINFO inf;
+	SHFILEINFOW sfi = { 0 };
+	SHGetFileInfo(fileName, -1, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX);
+	HIMAGELIST* imageList;
    if (largeIcon)
    {
-      SHGetFileInfo(fileName, 0, &inf, sizeof(inf), SHGFI_ICON | SHGFI_LARGEICON);
-      *largeIcon = inf.hIcon;
+      //SHGetFileInfo(fileName, 0, &inf, sizeof(inf), SHGFI_ICON | SHGFI_LARGEICON);
+      //*largeIcon = inf.hIcon;
+	   
+	   HRESULT hResult = SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (void**)&imageList);
+	   if (hResult == S_OK) {
+		   HICON hIcon;
+		   hResult = ((IImageList*)imageList)->GetIcon(sfi.iIcon, ILD_TRANSPARENT, &hIcon);
+		   *largeIcon = hIcon;
+	   }
    }
    if (smallIcon)
    {
-      SHGetFileInfo(fileName, 0, &inf, sizeof(inf), SHGFI_ICON | SHGFI_SMALLICON);
-      *smallIcon = inf.hIcon;
+      //SHGetFileInfo(fileName, 0, &inf, sizeof(inf), SHGFI_ICON | SHGFI_SMALLICON);
+      //*smallIcon = inf.hIcon;
+
+	   HRESULT hResult = SHGetImageList(SHIL_LARGE, IID_IImageList, (void**)&imageList);
+	   if (hResult == S_OK) {
+		   HICON hIcon;
+		   hResult = ((IImageList*)imageList)->GetIcon(sfi.iIcon, ILD_TRANSPARENT, &hIcon);
+		   *smallIcon = hIcon;
+	   }
    }
    return TRUE;
 }
