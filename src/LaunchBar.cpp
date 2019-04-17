@@ -66,6 +66,7 @@ typedef struct {
    HICON hIcon;         // Large icon
    HICON hSmallIcon;    // Small icon
    HWND  hToolTip;      // Tooltip window
+   CString name;
    WORD  showType;      // Window type for the application to launch
 } tCommandInfo, *pCommandInfo;
 
@@ -100,6 +101,7 @@ DWORD xInc, yInc;        // Increment between buttons
 #define ICON_SIZE (gLargeIcons ? 48 : 24) // Standard icon sizes
 #define ICON_OFF (gLargeIcons ? 6 : 3)    // Offset between the icon frame and the toolbar window frame
 #define WIND_OFF 12                       // Offset between toolbar window edge and first/last button
+#define ICON_TEXT 0
 #define MARK_RADIUS 0                     // Radius of a circle used to mark the toolbar window own space used for the popup menu
 
 #define GET_ICON(id) LoadIcon(CURR_INSTANCE, MAKEINTRESOURCE(id))
@@ -264,7 +266,7 @@ BOOL SetupLayout()
    SystemParametersInfo(SPI_GETWORKAREA, 0, &screenRect, 0);
 
    xButtonSize = ICON_SIZE + ICON_OFF*2;
-   yButtonSize = xButtonSize;
+   yButtonSize = xButtonSize + ICON_TEXT;
    xOffset = 0; // Отступы кнопок от основного окна
    yOffset = xOffset;
    inc = (gLargeIcons ? 2 : 0);
@@ -567,6 +569,9 @@ BOOL AddNewButton(LPCTSTR command,
    {
       // Get shortcut icons and tooltip
       GetShortcutInfo(pCom->command, target, &pCom->hIcon, &pCom->hSmallIcon, &toolTip);
+	  if (!iconFile.IsEmpty()) {
+		  GetFileIcons(iconFile, &pCom->hIcon, &pCom->hSmallIcon);
+	  }
    }
    else
    {
@@ -576,10 +581,12 @@ BOOL AddNewButton(LPCTSTR command,
          // Icon file not specified, use the command itself
          GetFileIcons(pCom->command, &pCom->hIcon, &pCom->hSmallIcon);
       else
-         ExtractIconEx(iconFile, iconInd, &pCom->hIcon, &pCom->hSmallIcon, 1);
+         //ExtractIconEx(iconFile, iconInd, &pCom->hIcon, &pCom->hSmallIcon, 1);
+		  GetFileIcons(iconFile, &pCom->hIcon, &pCom->hSmallIcon);
    }
 
    pCom->hToolTip = CreateTooltip(hWndButton, toolTip);
+   pCom->name = toolTip;
    pCom->showType = showType;
    pCom->hMenu = NULL;
 
@@ -610,6 +617,8 @@ HBRUSH gFillBrush = CreateSolidBrush(RGB(254, 187, 121));      // Fill
 HPEN gLightPen = CreatePen(PS_SOLID, 0, RGB(255, 255, 255));   // Normal button light side
 HPEN gShadowPen = CreatePen(PS_SOLID, 0, RGB(127, 127, 127));  // Normal button shadow side
 HPEN gBgPen = CreatePen(PS_SOLID, 0, RGB(254, 187, 121));      // Normal background pen
+HFONT font = CreateFont(16, 0, 0, 0, FW_DONTCARE, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+	CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, TEXT("Calibri"));
 
 enum eDrawType {eNormal, eHighlight, ePushed};
 void DrawButton(HWND hWnd, HDC orgDC = NULL, eDrawType type = eNormal)
@@ -665,6 +674,22 @@ void DrawButton(HWND hWnd, HDC orgDC = NULL, eDrawType type = eNormal)
    {
       DrawIconEx(hDC, ICON_OFF, ICON_OFF, gLargeIcons ? pCom->hIcon : pCom->hSmallIcon, 
                  ICON_SIZE, ICON_SIZE, 0, NULL, DI_NORMAL);
+
+	  // Подпись к кнопке
+	  if (ICON_TEXT != 0) {
+		  //LPCTSTR text = pCom->name;
+		  SetTextColor(hDC, RGB(204, 119, 60));
+		  //SetBkColor(hDC, RGB(21, 23, 29));
+		  SetBkMode(hDC, TRANSPARENT);
+		  SetTextAlign(hDC, TA_CENTER);
+		  SelectObject(hDC, font);
+		  //ExtTextOut(hDC, r.right / 2, r.bottom - ICON_TEXT, NULL, NULL, pCom->name, pCom->name.GetLength(), NULL);
+		  //TextOut(hDC, r.left, r.top/2, text, 4);
+		  RECT rect;
+		  SetRect(&rect, r.right / 2, r.bottom - ICON_TEXT, r.right, r.bottom);
+		  DrawText(hDC, pCom->name, -1, &rect, DT_NOCLIP | DT_WORDBREAK);
+	  }
+
       if (pCom->hMenu)
       {
          // Draw arrow in order to indicate the popup menu
@@ -673,22 +698,17 @@ void DrawButton(HWND hWnd, HDC orgDC = NULL, eDrawType type = eNormal)
              h = 12,
 			 d = 4,
              c = (r.bottom+r.top)/2;
-         //MoveToEx(hDC, r.right-(gLargeIcons * w/2), c, NULL);
-         //LineTo(hDC, r.right-w-(gLargeIcons * w / 2), c-h/2);
-         //LineTo(hDC, r.right-w-(gLargeIcons * w / 2), c+h/2);
-        //LineTo(hDC, r.right-(gLargeIcons * w / 2), c);
-		 MoveToEx(hDC, r.right - d, r.bottom - d, NULL);
-		 LineTo(hDC, r.right - d - w, r.bottom - d);
-		 LineTo(hDC, r.right - d, r.bottom - d - w);
-		 LineTo(hDC, r.right - d, r.bottom - d);
+		 
+		 POINT points[] = {
+			 r.right - d - w, r.bottom - d - ICON_TEXT,	// x1, y1
+			 r.right - d, r.bottom - d - w - ICON_TEXT,	// x2, y2
+			 r.right - d, r.bottom - d - ICON_TEXT			// x3, y3
+		 };
+		 Polygon(hDC, points, sizeof(points) / sizeof(points[0]));
 
          EndPath(hDC);
          SelectObject(hDC, gFillBrush);
          FillPath(hDC);
-
-         //SelectObject(hDC, gBgPen);
-         //MoveToEx(hDC, r.right-w, c-h/2, NULL);
-         //LineTo(hDC, r.right-w, c+h/2);
       }
    }
    if (!orgDC)
@@ -1099,10 +1119,10 @@ BOOL UpdateButtons()
 {
    // Update the buttons in accordance to the current state of the main directory
    static time_t lastUpdate = time(NULL);
-
+   /*
    if (gConfigFileUsed)
       return TRUE;
-
+   */
    DWORD i;
    // Validate current buttons
    for (i = 0; i < gButtons.cnt; i++)
@@ -1418,7 +1438,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
          }
          break;
 
-      case WM_LBUTTONDOWN:
+      //case WM_LBUTTONDOWN:
       case WM_RBUTTONDOWN:
          if (gAutoHide > 1 && gHidden)
          {
