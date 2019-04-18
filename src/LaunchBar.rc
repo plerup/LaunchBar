@@ -17,7 +17,7 @@
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
+#pragma code_page(1251)
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -27,7 +27,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 IDD_ABOUT DIALOGEX 0, 0, 186, 86
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "LaunchBar"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
+FONT 8, "Lucida Console", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,129,65,50,14
     LTEXT           "LaunchBar\nVersion: %s\nDate: %s",IDC_VERSION,46,13,124,28
@@ -37,25 +37,25 @@ BEGIN
                     "SysLink",WS_TABSTOP,46,66,57,10
 END
 
-IDD_SETTINGS DIALOGEX 0, 0, 152, 119
+IDD_SETTINGS DIALOGEX 0, 0, 200, 119
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Settings"
+CAPTION "Настройки"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Position",IDC_STATIC,7,7,62,77
-    CONTROL         "Left",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,18,49,12
-    CONTROL         "Top",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,15,30,49,12
-    CONTROL         "Right",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON,15,42,49,12
-    CONTROL         "Bottom",IDC_RADIO4,"Button",BS_AUTORADIOBUTTON,15,54,49,12
-    CONTROL         "Use large icons",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,10,68,14
-    CONTROL         "Always on top",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,36,68,14
-    CONTROL         "Autostart",IDC_CHECK5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,49,58,14
-    CONTROL         "Auto-hide",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,62,68,14
-    CONTROL         "Click to show",IDC_CHECK4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,87,75,58,14
+    GROUPBOX        "Положение",IDC_STATIC,7,7,62,77
+    CONTROL         "Слева",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,18,49,12
+    CONTROL         "Сверху",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,15,30,49,12
+    CONTROL         "Справа",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON,15,42,49,12
+    CONTROL         "Снизу",IDC_RADIO4,"Button",BS_AUTORADIOBUTTON,15,54,49,12
+    CONTROL         "Большие иконки",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,10,68,14
+    CONTROL         "Всегда сверху",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,36,68,14
+    CONTROL         "Автозапуск",IDC_CHECK5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,49,58,14
+    CONTROL         "Автоскрытие",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,62,68,14
+    CONTROL         "Нажать для появления",IDC_CHECK4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,87,75,90,14
     DEFPUSHBUTTON   "OK",IDOK,18,98,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,84,98,50,14
-    CONTROL         "Use large menus",IDC_CHECK6,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,23,68,14
-    CONTROL         "Center",IDC_CHECK7,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,66,37,14
+    PUSHBUTTON      "Отмена",IDCANCEL,84,98,50,14
+    CONTROL         "Большие иконки в меню",IDC_CHECK6,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,77,23,95,14
+    CONTROL         "По центру",IDC_CHECK7,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,66,45,14
 END
 
 IDD_ADDMENU DIALOGEX 0, 0, 146, 54
@@ -110,35 +110,40 @@ END
 // Menu
 //
 
+IDR_MENU0 MENU
+BEGIN
+	MENUITEM "Выход", IDM_EXIT
+END
+
 IDR_MENU1 MENU
 BEGIN
-    MENUITEM "Help...",                     IDM_HELP
-    MENUITEM "About...",                    IDM_ABOUT
-    MENUITEM "Settings...",                 IDM_SETTINGS
-    MENUITEM "Add Button...",               IDM_NEW
-    MENUITEM "Add Menu...",                 IDM_ADDMENU
-    MENUITEM "Explore",                     IDM_EXPLORE
-    MENUITEM "Refresh",                     IDM_REFRESH
-    MENUITEM "Add Start Menu",              IDM_ADDSTARTMENU
-    MENUITEM "Run...",                      IDM_RUN
-    MENUITEM "Exit",                        IDM_EXIT
+    MENUITEM "Помощь",                     IDM_HELP
+    MENUITEM "О программе",                    IDM_ABOUT
+    MENUITEM "Настройки",                 IDM_SETTINGS
+    MENUITEM "Добавить ярлык",               IDM_NEW
+    MENUITEM "Добавить папку",                 IDM_ADDMENU
+    MENUITEM "Найти на диске",                     IDM_EXPLORE
+    MENUITEM "Обновить",                     IDM_REFRESH
+    MENUITEM "Добавить в Пуск",              IDM_ADDSTARTMENU
+    MENUITEM "Выполнить",                      IDM_RUN
+    MENUITEM "Выход",                        IDM_EXIT
 END
 
 IDR_MENU2 MENU
 BEGIN
-    MENUITEM "Delete",                      IDM_DELETE
-    MENUITEM "Properties",                  IDM_PROPERTIES
-    MENUITEM "Explore",                     IDM_EXPLORE
-    MENUITEM "Run as administrator",        IDM_RUNASADMIN
+    MENUITEM "Удалить",                      IDM_DELETE
+    MENUITEM "Свойства",                  IDM_PROPERTIES
+    MENUITEM "Найти на диске",                     IDM_EXPLORE
+    MENUITEM "Запуск от администратора",        IDM_RUNASADMIN
 END
 
 IDR_MENU3 MENU
 BEGIN
-    MENUITEM "Delete",                      IDM_DELETE
-    MENUITEM "Properties",                  IDM_PROPERTIES
-    MENUITEM "Explore",                     IDM_EXPLORE
-    MENUITEM "Add Menu...",                 IDM_ADDMENU
-    MENUITEM "Add Item...",                 IDM_NEW
+    MENUITEM "Удалить",                      IDM_DELETE
+    MENUITEM "Свойства",                  IDM_PROPERTIES
+    MENUITEM "Проводник",                     IDM_EXPLORE
+    MENUITEM "Добавить папку",                 IDM_ADDMENU
+    MENUITEM "Добавить ярлык",                 IDM_NEW
 END
 
 
@@ -253,7 +258,7 @@ BEGIN
     IDS_DIR_NOTFOUND        "Directory: ""%s"" does not exist"
     IDS_DIR_EMPTY           "QuickLaunch directory could not be found"
     IDS_APPDESCR            "LaunchBar, Application launch toolbar"
-    IDS_MAIN_TIP            "Click for menu"
+    IDS_MAIN_TIP            "Открыть меню"
     IDS_ALL_FILES           "All Files (*.*)|*.*||"
     IDS_DIR_FAIL            "Failed to create directory: ""%s"""
     IDS_DIR_EXIST           "Directory: ""%s"" exists already"

@@ -66,6 +66,7 @@ typedef struct {
    HICON hIcon;         // Large icon
    HICON hSmallIcon;    // Small icon
    HWND  hToolTip;      // Tooltip window
+   CString name;
    WORD  showType;      // Window type for the application to launch
 } tCommandInfo, *pCommandInfo;
 
@@ -88,6 +89,7 @@ struct {
 BOOL gLargeIcons = FALSE; // Use large buttons
 BOOL gLargeMenus = FALSE; // Use large folder menu entries
 BOOL gOnTop = FALSE;      // Toolbar always on top
+BOOL gSetOff = FALSE;      // Отключение настроек в контекстном меню
 DWORD gAutoHide = 0;      // Hide toolbar when loosing focus
 BOOL gHidden = FALSE;     // Visibility state
 DWORD gLocation = 3;      // Corner position (1 = left, 2 = top, 3 = right, 4 = bottom)
@@ -96,10 +98,11 @@ BOOL gCenter = FALSE;     // Center the toolbar
 DWORD xOffset, yOffset;  // Offset from window border to button
 DWORD xInc, yInc;        // Increment between buttons
 
-#define ICON_SIZE (gLargeIcons ? 32 : 16) // Standard icon sizes
-#define ICON_OFF (gLargeIcons ? 5 : 3)    // Offset between the icon frame and the toolbar window frame
+#define ICON_SIZE (gLargeIcons ? 48 : 24) // Standard icon sizes
+#define ICON_OFF (gLargeIcons ? 6 : 3)    // Offset between the icon frame and the toolbar window frame
 #define WIND_OFF 12                       // Offset between toolbar window edge and first/last button
-#define MARK_RADIUS 3                     // Radius of a circle used to mark the toolbar window own space used for the popup menu
+#define ICON_TEXT 0
+#define MARK_RADIUS 0                     // Radius of a circle used to mark the toolbar window own space used for the popup menu
 
 #define GET_ICON(id) LoadIcon(CURR_INSTANCE, MAKEINTRESOURCE(id))
 
@@ -215,7 +218,7 @@ BOOL EnableAutoHide(BOOL on)
 BOOL AutoHide(BOOL hide)
 {
    // Hide the main window by making it thin
-   const int frameSize = 4;
+	const int frameSize = 6;
    if (!gAutoHide)
       return FALSE;
    gHidden = hide;
@@ -263,8 +266,8 @@ BOOL SetupLayout()
    SystemParametersInfo(SPI_GETWORKAREA, 0, &screenRect, 0);
 
    xButtonSize = ICON_SIZE + ICON_OFF*2;
-   yButtonSize = xButtonSize;
-   xOffset = 2;
+   yButtonSize = xButtonSize + ICON_TEXT;
+   xOffset = 0; // Отступы кнопок от основного окна
    yOffset = xOffset;
    inc = (gLargeIcons ? 2 : 0);
 
@@ -566,6 +569,9 @@ BOOL AddNewButton(LPCTSTR command,
    {
       // Get shortcut icons and tooltip
       GetShortcutInfo(pCom->command, target, &pCom->hIcon, &pCom->hSmallIcon, &toolTip);
+	  if (!iconFile.IsEmpty()) {
+		  GetFileIcons(iconFile, &pCom->hIcon, &pCom->hSmallIcon);
+	  }
    }
    else
    {
@@ -575,10 +581,12 @@ BOOL AddNewButton(LPCTSTR command,
          // Icon file not specified, use the command itself
          GetFileIcons(pCom->command, &pCom->hIcon, &pCom->hSmallIcon);
       else
-         ExtractIconEx(iconFile, iconInd, &pCom->hIcon, &pCom->hSmallIcon, 1);
+         //ExtractIconEx(iconFile, iconInd, &pCom->hIcon, &pCom->hSmallIcon, 1);
+		  GetFileIcons(iconFile, &pCom->hIcon, &pCom->hSmallIcon);
    }
 
    pCom->hToolTip = CreateTooltip(hWndButton, toolTip);
+   pCom->name = toolTip;
    pCom->showType = showType;
    pCom->hMenu = NULL;
 
@@ -602,11 +610,15 @@ BOOL AddNewButton(LPCTSTR command,
 //--------------------------------------------------------------------------
 
 // Brushes for highlighting of the buttons
-HBRUSH gBgBrush = CreateSolidBrush(RGB(211, 218, 237));        // Normal background
-HBRUSH gPushBrush = CreateSolidBrush(RGB(150, 150, 150));      // Button pushed
+HBRUSH gBgBrush = CreateSolidBrush(RGB(21, 23, 29));        // Normal background
+HBRUSH gPushBrush = CreateSolidBrush(RGB(97, 129, 176));      // Button pushed
+HBRUSH gHoverBrush = CreateSolidBrush(RGB(52, 72, 106));      // Button hover
+HBRUSH gFillBrush = CreateSolidBrush(RGB(254, 187, 121));      // Fill
 HPEN gLightPen = CreatePen(PS_SOLID, 0, RGB(255, 255, 255));   // Normal button light side
 HPEN gShadowPen = CreatePen(PS_SOLID, 0, RGB(127, 127, 127));  // Normal button shadow side
-HPEN gBgPen = CreatePen(PS_SOLID, 0, RGB(211, 218, 237));      // Normal background pen
+HPEN gBgPen = CreatePen(PS_SOLID, 0, RGB(254, 187, 121));      // Normal background pen
+HFONT font = CreateFont(16, 0, 0, 0, FW_DONTCARE, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+	CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, TEXT("Calibri"));
 
 enum eDrawType {eNormal, eHighlight, ePushed};
 void DrawButton(HWND hWnd, HDC orgDC = NULL, eDrawType type = eNormal)
@@ -616,13 +628,33 @@ void DrawButton(HWND hWnd, HDC orgDC = NULL, eDrawType type = eNormal)
    GetClientRect(hWnd, &r);
    HDC hDC = orgDC ? orgDC : GetWindowDC(hWnd);
    SelectObject(hDC, GetStockObject(NULL_PEN));
+
+   switch (type)
+   {
+	   case eNormal:
+		   SelectObject(hDC, gBgBrush);
+		   break;
+	   case eHighlight:
+		   SelectObject(hDC, gHoverBrush);
+		   break;
+	   case ePushed:
+		   SelectObject(hDC, gPushBrush);
+		   break;
+	   default:
+		   SelectObject(hDC, gBgBrush);
+		   break;
+   }
+   Rectangle(hDC, r.left, r.top, r.right, r.bottom);
+
+   /*
    if (type == ePushed)
       SelectObject(hDC, gPushBrush);
    else
       SelectObject(hDC, gBgBrush);
-   Rectangle(hDC, r.left, r.top, r.right, r.bottom);
+   //Rectangle(hDC, r.left, r.top, r.right, r.bottom);
    if (type != eNormal)
    {
+	   
       // Light side
       SelectObject(hDC, type == ePushed ? gShadowPen : gLightPen);
       MoveToEx(hDC, r.left, r.bottom, NULL);
@@ -632,30 +664,51 @@ void DrawButton(HWND hWnd, HDC orgDC = NULL, eDrawType type = eNormal)
       SelectObject(hDC, type != ePushed ? gShadowPen : gLightPen);
       LineTo(hDC, r.right-1, r.bottom-1);
       LineTo(hDC, r.left, r.bottom-1);
+	  
+	   SelectObject(hDC, gHoverBrush);
    }
+   */
 
    pCommandInfo pCom = GET_COM_INFO(hWnd);
    if (pCom)
    {
       DrawIconEx(hDC, ICON_OFF, ICON_OFF, gLargeIcons ? pCom->hIcon : pCom->hSmallIcon, 
                  ICON_SIZE, ICON_SIZE, 0, NULL, DI_NORMAL);
+
+	  // Подпись к кнопке
+	  if (ICON_TEXT != 0) {
+		  //LPCTSTR text = pCom->name;
+		  SetTextColor(hDC, RGB(204, 119, 60));
+		  //SetBkColor(hDC, RGB(21, 23, 29));
+		  SetBkMode(hDC, TRANSPARENT);
+		  SetTextAlign(hDC, TA_CENTER);
+		  SelectObject(hDC, font);
+		  //ExtTextOut(hDC, r.right / 2, r.bottom - ICON_TEXT, NULL, NULL, pCom->name, pCom->name.GetLength(), NULL);
+		  //TextOut(hDC, r.left, r.top/2, text, 4);
+		  RECT rect;
+		  SetRect(&rect, r.right / 2, r.bottom - ICON_TEXT, r.right, r.bottom);
+		  DrawText(hDC, pCom->name, -1, &rect, DT_NOCLIP | DT_WORDBREAK);
+	  }
+
       if (pCom->hMenu)
       {
          // Draw arrow in order to indicate the popup menu
          BeginPath(hDC);
-         INT w = 4,
-             h = 8,
+         INT w = 8,
+             h = 12,
+			 d = 4,
              c = (r.bottom+r.top)/2;
-         MoveToEx(hDC, r.right, c, NULL);
-         LineTo(hDC, r.right-w, c-h/2);
-         LineTo(hDC, r.right-w, c+h/2);
-         LineTo(hDC, r.right, c);
+		 
+		 POINT points[] = {
+			 r.right - d - w, r.bottom - d - ICON_TEXT,	// x1, y1
+			 r.right - d, r.bottom - d - w - ICON_TEXT,	// x2, y2
+			 r.right - d, r.bottom - d - ICON_TEXT			// x3, y3
+		 };
+		 Polygon(hDC, points, sizeof(points) / sizeof(points[0]));
+
          EndPath(hDC);
-         SelectObject(hDC, GetStockObject(BLACK_BRUSH));
+         SelectObject(hDC, gFillBrush);
          FillPath(hDC);
-         SelectObject(hDC, gBgPen);
-         MoveToEx(hDC, r.right-w, c-h/2, NULL);
-         LineTo(hDC, r.right-w, c+h/2);
       }
    }
    if (!orgDC)
@@ -702,21 +755,31 @@ LRESULT APIENTRY ButtonWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 
       case WM_LBUTTONDOWN:
          // Left button pressed, start visualization of a pressed button
-         DrawButton(hWnd, NULL, ePushed);
+		  if (gAutoHide > 1 && gHidden)
+		  {
+			  AutoHide(FALSE);
+		  }
+		  else {
+			  DrawButton(hWnd, NULL, ePushed);
+		  }
          break;
 
       case WM_RBUTTONDOWN:
          // Right button pressed on button, show appropriate context menu
-          DO_MENU_CONTEXTMENU((GET_COM_INFO(hWnd))->command);
+		  if (!gSetOff)
+			DO_MENU_CONTEXTMENU((GET_COM_INFO(hWnd))->command);
          break;
 
       case WM_MENURBUTTONUP:
          // Right button pressed during TrackPopupMenu
-         DO_MENU_CONTEXTMENU(*(CString*)GetMenuItemData((HMENU)lParam, (INT)wParam));
+		  if (!gSetOff)
+			DO_MENU_CONTEXTMENU(*(CString*)GetMenuItemData((HMENU)lParam, (INT)wParam));
          break;
 
       case WM_MOUSEMOVE:
          // Cursor has entered this button
+		  if (gAutoHide == 1)
+			  AutoHide(FALSE);
          if (!tracker)
          {
             // Start tracking in order to detect when leaving
@@ -727,7 +790,10 @@ LRESULT APIENTRY ButtonWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
             if (TrackMouseEvent(&tme))
             {
                // Highlight the button
-               DrawButton(hWnd, NULL, eHighlight);
+				if (!gHidden)
+				{
+					DrawButton(hWnd, NULL, eHighlight);
+				}
 	            tracker = hWnd;
             }
          }
@@ -756,13 +822,30 @@ LRESULT APIENTRY ButtonWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
          {
             if (pCom->hMenu)
             {
+				RECT r;
+				GetWindowRect(hWnd, &r);
+
                POINT pos;
                GetCursorPos(&pos);
+
                SetLargeMenus(gLargeMenus);
                openMenu = NULL;
+			   INT m_x = 0, m_y = 0;
+			   if (gLocation == 1) {
+				   m_x = r.right;
+			   }
+			   else {
+				   m_x = r.left;
+			   }
+			   if (gLocation == 2) {
+				   m_y = r.bottom;
+			   }
+			   else {
+				   m_y = r.top;
+			   }
                TrackPopupMenu(pCom->hMenu, 
                               TPM_LEFTBUTTON,
-					               pos.x, pos.y, 0, hWnd, NULL);
+					               m_x, m_y, 0, hWnd, NULL);
                SetLargeMenus(FALSE);
             }
             else
@@ -959,6 +1042,7 @@ BOOL ParseSetting(LPCTSTR str)
        _stscanf_s(str, _T("LARGE=%d"), &gLargeIcons) ||
        _stscanf_s(str, _T("LARGEMENUS=%d"), &gLargeMenus) ||
        _stscanf_s(str, _T("ONTOP=%d"), &gOnTop) ||
+	   _stscanf_s(str, _T("SETOFF=%d"), &gSetOff) ||
        _stscanf_s(str, _T("AUTOHIDE=%d"), &gAutoHide)
        );
 }
@@ -973,7 +1057,7 @@ BOOL ParseConfigFile(LPCTSTR fileName)
    const DWORD buffSize = 1024;
    CString line;
 	FILE *inFile;
-   if (_tfopen_s(&inFile, fileName, _T("rt")))
+   if (_tfopen_s(&inFile, fileName, _T("rt, ccs=UTF-8")))
       ShowMessage(LoadFormatResString(IDS_CONF_ERR, fileName), eFatal);
    while (_fgetts(line.GetBuffer(buffSize), buffSize, inFile))
 	{
@@ -1006,7 +1090,21 @@ BOOL ParseConfigFile(LPCTSTR fileName)
       if (pos > 0)
          iconInd = _tstoi(line.Tokenize(SEP, pos));
 
-      AddNewButton(command, gButtons.cnt, params, iconFile, iconInd, toolTip);
+	  if (IsDir(command) && !params.IsEmpty()) {
+		  if (params == _T("OPENDIR")) {
+			  gMainDir = command;
+			  APPEND_BS(gMainDir);
+
+			  // Scan for possible new entries in the directory and add buttons when applicable
+			  CString path = gMainDir + _T("*.*"),
+				  fileName = EMPTY_CSTR;
+			  HANDLE ref;
+			  while (FindFiles(path, fileName, &ref))
+				  if (Com2Index(fileName) == -1)
+					  AddNewButton(fileName);
+		  }
+	  } else
+			AddNewButton(command, gButtons.cnt, params, iconFile, iconInd, toolTip);
 	}
 	fclose(inFile);
    gConfigFileUsed = TRUE;
@@ -1021,10 +1119,10 @@ BOOL UpdateButtons()
 {
    // Update the buttons in accordance to the current state of the main directory
    static time_t lastUpdate = time(NULL);
-
+   /*
    if (gConfigFileUsed)
       return TRUE;
-
+   */
    DWORD i;
    // Validate current buttons
    for (i = 0; i < gButtons.cnt; i++)
@@ -1229,15 +1327,15 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
             {
                SelectObject(hDC, gLightPen);
                MoveToEx(hDC, 0, WIND_OFF-2, NULL);
-               LineTo(hDC, gWindowSize.x, WIND_OFF-2);
+               //LineTo(hDC, gWindowSize.x, WIND_OFF-2);
                MoveToEx(hDC, 0, gWindowSize.y - WIND_OFF-1, NULL);
-               LineTo(hDC, gWindowSize.x, gWindowSize.y - WIND_OFF-1);
+               //LineTo(hDC, gWindowSize.x, gWindowSize.y - WIND_OFF-1);
 
                SelectObject(hDC, gShadowPen);
                MoveToEx(hDC, 0, WIND_OFF-1, NULL);
-               LineTo(hDC, gWindowSize.x, WIND_OFF-1);
+               //LineTo(hDC, gWindowSize.x, WIND_OFF-1);
                MoveToEx(hDC, 0, gWindowSize.y - WIND_OFF, NULL);
-               LineTo(hDC, gWindowSize.x, gWindowSize.y - WIND_OFF);
+               //LineTo(hDC, gWindowSize.x, gWindowSize.y - WIND_OFF);
 
                p1.x = p2.x = (gWindowSize.x)/2 - 1;
                p1.y = MARK_RADIUS + yOffset;
@@ -1247,15 +1345,15 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
             {
                SelectObject(hDC, gLightPen);
                MoveToEx(hDC, WIND_OFF-2, 0, NULL);
-               LineTo(hDC, WIND_OFF-2, gWindowSize.y);
+               //LineTo(hDC, WIND_OFF-2, gWindowSize.y);
                MoveToEx(hDC, gWindowSize.x - WIND_OFF-1, 0, NULL);
-               LineTo(hDC, gWindowSize.x - WIND_OFF-1, gWindowSize.y);
+               //LineTo(hDC, gWindowSize.x - WIND_OFF-1, gWindowSize.y);
 
                SelectObject(hDC, gShadowPen);
                MoveToEx(hDC, WIND_OFF-1, 0, NULL);
-               LineTo(hDC, WIND_OFF-1, gWindowSize.y);
+               //LineTo(hDC, WIND_OFF-1, gWindowSize.y);
                MoveToEx(hDC, gWindowSize.x - WIND_OFF, 0, NULL);
-               LineTo(hDC, gWindowSize.x - WIND_OFF, gWindowSize.y);
+               //LineTo(hDC, gWindowSize.x - WIND_OFF, gWindowSize.y);
 
                p1.x = MARK_RADIUS + xOffset;
                p2.x = gWindowSize.x - (MARK_RADIUS + xOffset) - 1;
@@ -1340,7 +1438,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
          }
          break;
 
-      case WM_LBUTTONDOWN:
+      //case WM_LBUTTONDOWN:
       case WM_RBUTTONDOWN:
          if (gAutoHide > 1 && gHidden)
          {
@@ -1349,6 +1447,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
          else
          {
             // Do menu selection
+
             GetCursorPos(&pos);
             EnableMenuItem(gMainPopupMenu, IDM_ADDSTARTMENU, MF_BYCOMMAND | (FileExists(gStartMenuLink) ? MF_GRAYED : MF_ENABLED));
             TrackPopupMenu(gMainPopupMenu, 
@@ -1512,6 +1611,11 @@ BOOL InitInstance(HINSTANCE hInstance, LPCTSTR lpCmdLine)
    // Check for possible command line parameters
    CString cmdLine = lpCmdLine;
    INT start = 0;
+
+   //cmdLine = "set.txt";
+   //cmdLine = "D:\\234";
+   //gMainDir = "D:/234";
+
    if (!cmdLine.IsEmpty())
    {
       // Get possible settings specified on the command line
@@ -1548,7 +1652,7 @@ BOOL InitInstance(HINSTANCE hInstance, LPCTSTR lpCmdLine)
    }
 
    // Define registry root and read possible saved preferences
-   SetAppRegRoot(_T("Software\\Peter Lerup\\"PROG_NAME));
+   //SetAppRegRoot(_T("Software\\Peter Lerup\\"PROG_NAME));
 
    if (!gConfigFileUsed)
    {
@@ -1574,18 +1678,26 @@ BOOL InitInstance(HINSTANCE hInstance, LPCTSTR lpCmdLine)
    EnableAutoHide(TRUE);
 
    // Init application popup menus and set item icons
-   gMainPopupMenu = LoadMenu(CURR_INSTANCE, MAKEINTRESOURCE(IDR_MENU1));
+   if (!gSetOff) {
+	   gMainPopupMenu = LoadMenu(CURR_INSTANCE, MAKEINTRESOURCE(IDR_MENU1));
+   }
+   else {
+	   gMainPopupMenu = LoadMenu(CURR_INSTANCE, MAKEINTRESOURCE(IDR_MENU0));
+   }
    InitPopupMenu(gMainPopupMenu);
-   SetMenuItemData(gMainPopupMenu, IDM_HELP, GET_ICON(IDI_HELP));
-   SetMenuItemData(gMainPopupMenu, IDM_ABOUT, GET_ICON(IDI_APP));
-   SetMenuItemData(gMainPopupMenu, IDM_SETTINGS, GET_ICON(IDI_SETTINGS));
-   SetMenuItemData(gMainPopupMenu, IDM_NEW, GET_ICON(IDI_NEW));
-   SetMenuItemData(gMainPopupMenu, IDM_ADDMENU, GET_ICON(IDI_MENU));
-   SetMenuItemData(gMainPopupMenu, IDM_EXPLORE, GET_ICON(IDI_EXPLORE));
+   if (!gSetOff) {
+	   SetMenuItemData(gMainPopupMenu, IDM_HELP, GET_ICON(IDI_HELP));
+	   SetMenuItemData(gMainPopupMenu, IDM_ABOUT, GET_ICON(IDI_APP));
+	   SetMenuItemData(gMainPopupMenu, IDM_SETTINGS, GET_ICON(IDI_SETTINGS));
+	   SetMenuItemData(gMainPopupMenu, IDM_NEW, GET_ICON(IDI_NEW));
+	   SetMenuItemData(gMainPopupMenu, IDM_ADDMENU, GET_ICON(IDI_MENU));
+	   SetMenuItemData(gMainPopupMenu, IDM_EXPLORE, GET_ICON(IDI_EXPLORE));
+	   SetMenuItemData(gMainPopupMenu, IDM_ADDSTARTMENU, GET_ICON(IDI_STARTMENU));
+	   SetMenuItemData(gMainPopupMenu, IDM_RUN, GET_ICON(IDI_RUN));
+   }
    SetMenuItemData(gMainPopupMenu, IDM_REFRESH, GET_ICON(IDI_REFRESH));
-   SetMenuItemData(gMainPopupMenu, IDM_ADDSTARTMENU, GET_ICON(IDI_STARTMENU));
-   SetMenuItemData(gMainPopupMenu, IDM_RUN, GET_ICON(IDI_RUN));
    SetMenuItemData(gMainPopupMenu, IDM_EXIT, GET_ICON(IDI_EXIT));
+
    if (IsWinPE())
       DeleteMenu(gMainPopupMenu, IDM_EXIT, MF_BYCOMMAND);
 
@@ -1605,7 +1717,7 @@ BOOL InitInstance(HINSTANCE hInstance, LPCTSTR lpCmdLine)
    SetMenuItemData(gDirPopupMenu, IDM_ADDMENU, GET_ICON(IDI_MENU));
 
 
-   if (!gConfigFileUsed)
+   if (!gConfigFileUsed || !gMainDir.IsEmpty())
    {
       // Accept drag and drop in the main window spare areas
       DragAcceptFiles(gMainWindow, TRUE);
